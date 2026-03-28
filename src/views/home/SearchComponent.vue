@@ -1,83 +1,61 @@
 <template>
-    <div class="max-w-7xl z-20 w-full p-4">
-        <div class="bg-primary-color rounded-lg py-6 sm:py-10 px-3 sm:px-4 shadow-2xl">
+    <div class="search-wrapper">
+        <div class="search-box">
 
             <!-- Search Bar -->
-            <div class="flex flex-col sm:flex-row items-stretch bg-white rounded-xl overflow-visible shadow-sm ">
+            <div class="search-bar">
 
                 <!-- FROM -->
-                <div class="relative flex-1 min-w-0">
-                    <div
-                        class="flex flex-col justify-center px-4 sm:px-5 py-3 h-full hover:bg-gray-50 transition-colors duration-150">
-                        <span
-                            class="text-[10px] sm:text-[11px] font-semibold text-primary-grey uppercase tracking-wide mb-0.5">
-                            From
-                        </span>
+                <div class="field-wrapper">
+                    <div class="field-inner">
+                        <span class="field-label">From</span>
                         <input v-model="fromQuery" @focus="showFromDropdown = true" @blur="closeFrom" type="text"
-                            placeholder="City or airport"
-                            class="w-full text-sm font-semibold text-black bg-transparent outline-none placeholder:text-primary-grey placeholder:font-normal" />
+                            placeholder="City or airport" class="field-input" />
                     </div>
-
-                    <ul v-if="showFromDropdown && filteredFrom.length"
-                        class="absolute top-full left-0 z-50 mt-1 w-full sm:w-64 bg-white rounded-xl shadow-xl border border-primary-border overflow-hidden max-h-52 overflow-y-auto">
+                    <ul v-if="showFromDropdown && filteredFrom.length" class="dropdown no-scrollbar">
                         <li v-for="city in filteredFrom" :key="city" @mousedown.prevent="selectFrom(city)"
-                            class="flex items-center gap-3 px-4 py-2.5 hover:bg-blue-50 cursor-pointer">
-                            <MapPin class="w-4 text-black/60" />
-                            <span class="text-sm text-gray-800 font-medium">{{ city }}</span>
+                            class="dropdown-item">
+                            <MapPin class="dropdown-icon" />
+                            <span class="dropdown-text">{{ city }}</span>
                         </li>
                     </ul>
                 </div>
 
                 <!-- SWAP -->
-                <div
-                    class="flex border-y border-primary-grey sm:border-0 items-center justify-center shrink-0 relative z-10 py-2 sm:py-0 sm:px-1">
-
-                    <!-- divider lines -->
-                    <div class="hidden sm:block absolute left-0 top-3 bottom-3 w-px bg-gray-200"></div>
-
-                    <button @click="swapLocations"
-                        class="w-9 h-9 rounded-full text-primary-blue flex items-center justify-center transition-all duration-200 shadow-sm rotate-90 sm:rotate-0">
-                        <ArrowLeftRight :class="{ 'rotate-180': swapped }"
-                            class="w-6 sm:w-8 transition-transform duration-300" />
+                <div class="swap-wrapper">
+                    <div class="divider divider-left"></div>
+                    <button @click="swapLocations" class="swap-btn">
+                        <ArrowLeftRight :class="{ 'swap-icon--rotated': swapped }" class="swap-icon" />
                     </button>
-
-                    <div class="hidden sm:block absolute right-0 top-3 bottom-3 w-px bg-gray-200"></div>
+                    <div class="divider divider-right"></div>
                 </div>
 
                 <!-- TO -->
-                <div class="relative flex-1 min-w-0">
-                    <div
-                        class="flex flex-col justify-center px-4 sm:px-5 py-3 h-full hover:bg-gray-50 transition-colors duration-150">
-                        <span
-                            class="text-[10px] sm:text-[11px] font-semibold text-primary-grey uppercase tracking-wide mb-0.5">
-                            To
-                        </span>
+                <div class="field-wrapper">
+                    <div class="field-inner">
+                        <span class="field-label">To</span>
                         <input v-model="toQuery" @focus="showToDropdown = true" @blur="closeTo" type="text"
-                            placeholder="City or airport"
-                            class="w-full text-sm font-semibold text-black bg-transparent outline-none placeholder:text-primary-grey placeholder:font-normal" />
+                            placeholder="City or airport" class="field-input" />
                     </div>
-
-                    <ul v-if="showToDropdown && filteredTo.length"
-                        class="absolute top-full left-0 z-50 mt-1 w-full sm:w-64 bg-white rounded-xl shadow-xl border border-primary-border overflow-hidden max-h-52 overflow-y-auto">
+                    <ul v-if="showToDropdown && filteredTo.length" class="dropdown no-scrollbar">
                         <li v-for="city in filteredTo" :key="city" @mousedown.prevent="selectTo(city)"
-                            class="flex items-center gap-3 px-4 py-2.5 hover:bg-blue-50 cursor-pointer">
-                            <MapPin class="w-4 text-black/60" />
-                            <span class="text-sm text-gray-800 font-medium">{{ city }}</span>
+                            class="dropdown-item">
+                            <MapPin class="dropdown-icon" />
+                            <span class="dropdown-text">{{ city }}</span>
                         </li>
                     </ul>
                 </div>
 
                 <!-- SEARCH BUTTON -->
-                <button @click="handleSearch"
-                    class="w-full sm:w-auto bg-primary-blue hover:bg-primary-blue/80 text-white font-bold text-sm px-6 sm:px-8 py-3 sm:py-0 rounded-b-xl sm:rounded-none sm:rounded-r-xl transition-all duration-200 flex items-center justify-center gap-2 active:scale-95">
-                    <Search class="w-4" />
+                <button @click="handleSearch" class="search-btn">
+                    <Search class="search-btn-icon" />
                     Search
                 </button>
             </div>
 
             <!-- Error -->
-            <p v-if="errorMsg" class="mt-3 text-sm text-red-400 font-medium flex items-center gap-1.5">
-                <TriangleAlert class="w-4" />
+            <p v-if="errorMsg" class="error-msg">
+                <TriangleAlert class="error-icon" />
                 {{ errorMsg }}
             </p>
 
@@ -119,13 +97,8 @@ const filteredTo = computed(() =>
     )
 )
 
-function closeFrom() {
-    showFromDropdown.value = false
-}
-
-function closeTo() {
-    showToDropdown.value = false
-}
+function closeFrom() { showFromDropdown.value = false }
+function closeTo() { showToDropdown.value = false }
 
 function selectFrom(city) {
     fromQuery.value = city
@@ -149,20 +122,328 @@ function swapLocations() {
 
 function handleSearch() {
     errorMsg.value = ''
-
     if (!fromQuery.value || !toQuery.value) {
         errorMsg.value = 'Please select both a source and destination city.'
         return
     }
-
     if (fromQuery.value.toLowerCase() === toQuery.value.toLowerCase()) {
         errorMsg.value = 'Source and destination cannot be the same city.'
         return
     }
-
-    selectedStates.value.source = fromQuery.value;
-    selectedStates.value.destination = toQuery.value;
+    selectedStates.value.source = fromQuery.value
+    selectedStates.value.destination = toQuery.value
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Wrapper — sits on top of hero overlay */
+.search-wrapper {
+    position: relative;
+    z-index: 20;
+    width: 100%;
+    max-width: 80rem;
+    padding: 1rem;
+}
+
+/* Dark card */
+.search-box {
+    background-color: var(--color-primary-color);
+    border-radius: 0.5rem;
+    padding: 1.5rem 0.75rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+}
+
+@media (min-width: 640px) {
+    .search-box {
+        padding: 2.5rem 1rem;
+    }
+}
+
+/* ── Search bar row ── */
+.search-bar {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-radius: 0.75rem;
+    overflow: visible;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+@media (min-width: 640px) {
+    .search-bar {
+        flex-direction: row;
+        align-items: stretch;
+        min-height: 64px;
+    }
+}
+
+/* ── Field ── */
+.field-wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+}
+
+.field-inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    height: 100%;
+    cursor: text;
+    transition: background-color 0.15s ease;
+    border-radius: 0.75rem;
+}
+
+/* Remove border-radius on sides when horizontal */
+@media (min-width: 640px) {
+    .field-wrapper:first-child .field-inner {
+        border-radius: 0.75rem 0 0 0.75rem;
+    }
+
+    .field-wrapper:not(:first-child) .field-inner {
+        border-radius: 0;
+    }
+}
+
+.field-inner:hover {
+    background-color: #f9fafb;
+}
+
+.field-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--color-primary-grey);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 3px;
+    line-height: 1;
+}
+
+@media (min-width: 640px) {
+    .field-label {
+        font-size: 11px;
+    }
+}
+
+.field-input {
+    width: 100%;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #000;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0;
+    line-height: 1.4;
+    font-family: inherit;
+}
+
+.field-input::placeholder {
+    color: var(--color-primary-grey);
+    font-weight: 400;
+}
+
+/* ── Dropdown ── */
+.dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: 50;
+    width: 100%;
+    min-width: 14rem;
+    background-color: #fff;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    border: 1px solid #e5e7eb;
+    overflow-y: auto;
+    max-height: 13rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+@media (min-width: 640px) {
+    .dropdown {
+        width: 16rem;
+    }
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.12s;
+}
+
+.dropdown-item:hover {
+    background-color: #eff6ff;
+}
+
+.dropdown-icon {
+    width: 1rem;
+    height: 1rem;
+    color: rgba(0, 0, 0, 0.5);
+    flex-shrink: 0;
+}
+
+.dropdown-text {
+    font-size: 0.875rem;
+    color: #1f2937;
+    font-weight: 500;
+}
+
+/* ── Swap button ── */
+.swap-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 10;
+    /* Mobile: horizontal divider between from/to */
+    padding: 0.5rem 1rem;
+    border-top: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+@media (min-width: 640px) {
+    .swap-wrapper {
+        border: none;
+        padding: 0 0.25rem;
+    }
+}
+
+.divider {
+    display: none;
+    position: absolute;
+    top: 0.75rem;
+    bottom: 0.75rem;
+    width: 1px;
+    background-color: #e5e7eb;
+}
+
+@media (min-width: 640px) {
+    .divider {
+        display: block;
+    }
+}
+
+.divider-left {
+    left: 0;
+}
+
+.divider-right {
+    right: 0;
+}
+
+.swap-btn {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 9999px;
+    color: var(--color-primary-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    /* Vertical on mobile */
+    transform: rotate(90deg);
+}
+
+@media (min-width: 640px) {
+    .swap-btn {
+        transform: rotate(0deg);
+    }
+}
+
+.swap-btn:hover {
+    background-color: #f3f4f6;
+}
+
+.swap-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    transition: transform 0.3s;
+}
+
+@media (min-width: 640px) {
+    .swap-icon {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+}
+
+.swap-icon--rotated {
+    transform: rotate(180deg);
+}
+
+/* ── Search button ── */
+.search-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    background-color: var(--color-primary-blue);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.875rem;
+    padding: 0.875rem 1.5rem;
+    border: none;
+    border-radius: 0 0 0.75rem 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    font-family: inherit;
+}
+
+@media (min-width: 640px) {
+    .search-btn {
+        width: auto;
+        flex-shrink: 0;
+        padding: 0 2rem;
+        border-radius: 0 0.75rem 0.75rem 0;
+        align-self: stretch;
+    }
+}
+
+.search-btn:hover {
+    background-color: #0051c3;
+}
+
+.search-btn:active {
+    transform: scale(0.97);
+}
+
+.search-btn-icon {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* ── Error ── */
+.error-msg {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    color: #f87171;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.error-icon {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+}
+</style>
